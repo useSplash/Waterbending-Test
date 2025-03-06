@@ -70,5 +70,4 @@ public class MeshBending : MonoBehaviour
            (3 * u * t2 * t2) * P2 +
            (t2 * t2 * t) * P3;
     }
-
 }

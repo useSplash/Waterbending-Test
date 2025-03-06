@@ -50,7 +50,7 @@ Material:
     - _Smoothness: 1
     - _VertexDisplacement: 0.01
     m_Colors:
-    - _Color: {r: 0.02830189, g: 0.6052238, b: 1, a: 0}
+    - _Color: {r: 0, g: 0.75686276, b: 1, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &9171524540725386876
 MonoBehaviour:
