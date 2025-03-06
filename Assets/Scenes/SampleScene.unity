@@ -178,14 +178,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 54570671}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2164396, y: 0, z: 0, w: 0.97629607}
+  m_LocalRotation: {x: 0, y: 0.97629607, z: -0.2164396, w: 0}
   m_LocalPosition: {x: 0, y: 0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 664430773}
   m_Father: {fileID: 1288909678}
-  m_LocalEulerAnglesHint: {x: 25, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 25, y: 180, z: 0}
 --- !u!1 &110369782
 GameObject:
   m_ObjectHideFlags: 0
@@ -210,14 +210,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 110369782}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.078459114, y: 0, z: 0, w: 0.99691737}
+  m_LocalRotation: {x: 0, y: 0.99691737, z: -0.078459114, w: 0}
   m_LocalPosition: {x: 1, y: 0.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 330585546}
   m_Father: {fileID: 1288909678}
-  m_LocalEulerAnglesHint: {x: 9, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 9, y: 180, z: 0}
 --- !u!1 &120950456
 GameObject:
   m_ObjectHideFlags: 0
@@ -17177,7 +17177,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1288909677}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.9775999, z: 0, w: -0.21047172}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -17186,7 +17186,7 @@ Transform:
   - {fileID: 54570672}
   - {fileID: 1881776847}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -204.3, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &1288909679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17199,6 +17199,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a78a1ae1c413a5044832a410a450739d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 1288909680}
+  moveSpeed: 5
 --- !u!54 &1288909680
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -17224,7 +17226,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!65 &1288909681
 BoxCollider:
