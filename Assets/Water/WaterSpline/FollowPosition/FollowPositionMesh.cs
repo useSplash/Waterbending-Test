@@ -7,6 +7,7 @@ public class FollowPositionMesh : MonoBehaviour
     // Mesh Points
     public int numberOfPoints;
     List<Transform> points = new List<Transform>();
+    public Transform head;
 
     // Position Tracking
     Vector3[] positions; // Fixed-size buffer
@@ -20,6 +21,7 @@ public class FollowPositionMesh : MonoBehaviour
     Vector3[] vertices;
     Vector3[] modifiedVertices;
 
+    int ballSize;
     
     void Start()
     {
@@ -30,20 +32,13 @@ public class FollowPositionMesh : MonoBehaviour
         vertices = originalMesh.vertices;
         modifiedVertices = new Vector3[vertices.Length];
 
+        points.Add(head);
+
         for (int i = 0; i < numberOfPoints; i++)
         {
-            if (i == 0)
-            {
-                // Create the point GameObject
-                GameObject point = new GameObject("Head_Point");
-                points.Add(point.transform);
-            }
-            else
-            {
-                // Create the point GameObject
-                GameObject point = new GameObject($"Point_{i}");
-                points.Add(point.transform);
-            }
+            // Create the point GameObject
+            GameObject point = new GameObject($"Point_{i}");
+            points.Add(point.transform);
         }
         
         numberOfPositions = delay * points.Count;
@@ -58,6 +53,8 @@ public class FollowPositionMesh : MonoBehaviour
         positions[index] = points[0].position;  // The first point will be the Head_Point
         index = (index + 1) % positions.Length; // Circular indexing
 
+        ballSize = 0;
+
         for (int i = 1; i < points.Count; i++)
         {
             int localIndex = index - (i * delay);
@@ -66,7 +63,13 @@ public class FollowPositionMesh : MonoBehaviour
                 localIndex += numberOfPositions;
             }
             points[i].transform.position = positions[localIndex];
+            if (Vector3.Distance(positions[localIndex], head.position) < 0.1f)
+            {
+                ballSize += 1;
+            };
         }
+
+        head.localScale = Vector3.Lerp(head.localScale, Vector3.one * ballSize * 0.25f, 0.5f);
 
         // For mesh point allocating
         float segmentLength = 1f / (points.Count - 1);
