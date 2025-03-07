@@ -7,6 +7,13 @@ public class PlayerWaterbending : MonoBehaviour
     GameObject[] puddles;
     public float bendingRange;
 
+    public Transform waterHead;
+    public Transform waterHover;
+
+    GameObject closestPuddle;
+
+    Coroutine movementCoroutine;
+
     void Start()
     {
         puddles = GameObject.FindGameObjectsWithTag("Puddle");
@@ -16,22 +23,31 @@ public class PlayerWaterbending : MonoBehaviour
     {
         if (puddles != null)
         {
-            GameObject closestPuddle = FindClosestObject(puddles);
+            if (closestPuddle != FindClosestObject(puddles) && closestPuddle != null)
+            {
+                closestPuddle.GetComponent<PuddleSelector>().Deselect();
+            }
+
+            closestPuddle = FindClosestObject(puddles);
+
             if (Vector3.Distance(closestPuddle.transform.position, transform.position) < bendingRange)
             {
-                foreach (GameObject puddle in puddles)
-                {
-                    puddle.GetComponent<PuddleSelector>().Deselect();
-                }
                 closestPuddle.GetComponent<PuddleSelector>().Select();
             }
-            else
-            {
-                foreach (GameObject puddle in puddles)
-                {
-                    puddle.GetComponent<PuddleSelector>().Deselect();
-                }
-            }
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Debug.Log("Left Click");
+            if (movementCoroutine != null) {StopCoroutine(movementCoroutine);}
+            movementCoroutine = StartCoroutine(OrbitAround(waterHead, transform));
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            Debug.Log("Right Click");
+            if (movementCoroutine != null) {StopCoroutine(movementCoroutine);}
+            movementCoroutine = StartCoroutine(MoveTo(waterHead, waterHover, loop:true));
         }
     }
 
@@ -54,4 +70,42 @@ public class PlayerWaterbending : MonoBehaviour
         return closest;
     }
 
+    IEnumerator MoveTo(Transform objToMove,
+                        Transform target,
+                        float speed = 0.1f,
+                        bool loop = false
+                        )
+    {
+        while (loop || Vector3.Distance(objToMove.position, target.position) < 0.01f)
+        {
+            objToMove.position = Vector3.Lerp(objToMove.position, target.position, speed);
+            yield return null; // Wait for the next frame
+        }
+    }
+
+    IEnumerator OrbitAround(
+        Transform objToMove,
+        Transform orbitReference, 
+        float distanceFromObject = 5.0f,
+        float speed = 5.0f, 
+        float distanceVariance = 0, 
+        float heightVariance = 0)
+    {
+        Vector3 localAxis = Vector3.right;
+        while (true)
+        {
+
+            // Compute new position in local space
+            Vector3 orbitDirection = new Vector3(
+                Mathf.Cos(Time.time * speed),
+                0,
+                Mathf.Sin(Time.time * speed)
+            );
+
+            // Apply position relative to the orbit reference
+            objToMove.position = Vector3.Lerp(objToMove.position, orbitReference.position + (orbitDirection*distanceFromObject), 0.1f);
+
+            yield return null; // Wait for the next frame
+        }
+    }
 }

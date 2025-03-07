@@ -23,8 +23,25 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         // Get movement input
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        float horizontal = 0;
+        float vertical = 0;
+
+        if (Input.GetKey(KeyCode.W))
+        {
+            vertical += 1;
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            vertical -= 1;
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            horizontal -= 1;
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            horizontal += 1;
+        }
 
         // Move relative to player's rotation
         Vector3 moveDirection = (transform.right * horizontal + transform.forward * vertical).normalized;

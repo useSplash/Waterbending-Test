@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class FollowPositionMesh : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class FollowPositionMesh : MonoBehaviour
     // Position Tracking
     Vector3[] positions; // Fixed-size buffer
     public int delay; // Frames between each point
+    
+    [Range(0.1f, 2)]
+    public float size = 0.1f;
     int numberOfPositions;
     int index = 0;
 
@@ -20,6 +24,9 @@ public class FollowPositionMesh : MonoBehaviour
 
     Vector3[] vertices;
     Vector3[] modifiedVertices;
+
+    public bool canCollapse;
+    public bool isCollaped;
 
     int ballSize;
     
@@ -38,22 +45,28 @@ public class FollowPositionMesh : MonoBehaviour
         {
             // Create the point GameObject
             GameObject point = new GameObject($"Point_{i}");
+            point.transform.parent = transform.parent;
+            point.transform.position = head.position;
             points.Add(point.transform);
         }
         
-        numberOfPositions = delay * points.Count;
+        numberOfPositions = 1000;
         positions = new Vector3[numberOfPositions];
     }
 
     void Update()
     {
-        if (points != null && points.Count <= 1) { return;}
+        if (points != null && points.Count <= 1) {return;}
 
-        // For tracking positions
-        positions[index] = points[0].position;  // The first point will be the Head_Point
-        index = (index + 1) % positions.Length; // Circular indexing
+        if (canCollapse || Vector3.Distance(positions[index], points[0].localPosition) > 0.01f)
+        {
+            // For tracking positions
+            index = (index + 1) % positions.Length; // Circular indexing
+            positions[index] = points[0].localPosition;  // The first point will be the Head_Point
+        }
 
         ballSize = 0;
+        isCollaped = false;
 
         for (int i = 1; i < points.Count; i++)
         {
@@ -62,14 +75,19 @@ public class FollowPositionMesh : MonoBehaviour
             {
                 localIndex += numberOfPositions;
             }
-            points[i].transform.position = positions[localIndex];
-            if (Vector3.Distance(positions[localIndex], head.position) < 0.1f)
+            points[i].transform.localPosition = positions[localIndex];
+            if (Vector3.Distance(positions[localIndex], head.localPosition) < 0.1f)
             {
                 ballSize += 1;
             };
         }
 
-        head.localScale = Vector3.Lerp(head.localScale, Vector3.one * ballSize * 0.25f, 0.5f);
+        if (ballSize == points.Count - 1)
+        {
+            isCollaped = true;
+        }
+
+        head.localScale = Vector3.Lerp(head.localScale, Vector3.one * ballSize * 0.25f * size, 0.5f);
 
         // For mesh point allocating
         float segmentLength = 1f / (points.Count - 1);
@@ -86,10 +104,10 @@ public class FollowPositionMesh : MonoBehaviour
             Transform P2 = points[points.Count - segmentIndex - 2];
 
             // Interpolate between P1 and P2
-            Vector3 position = Vector3.Lerp(P1.position, P2.position, localT);
+            Vector3 position = Vector3.Lerp(P1.localPosition, P2.localPosition, localT);
 
             // Calculate tangent (direction of the path)
-            Vector3 tangent = (P2.position - P1.position).normalized;
+            Vector3 tangent = (P2.localPosition - P1.localPosition).normalized;
 
             // Estimate normal (perpendicular to the tangent in XZ plane)
             Vector3 normal = Vector3.Cross(tangent, Vector3.up).normalized;
@@ -101,7 +119,7 @@ public class FollowPositionMesh : MonoBehaviour
             Vector3 offset = vertices[i] - originalMesh.bounds.center;
 
             // Transform offset to match curve orientation
-            position += (normal * offset.x) + (binormal * offset.y);
+            position += (normal * offset.x * size) + (binormal * offset.y * size);
 
             // Apply transformation to modified vertex
             modifiedVertices[i] = position;
